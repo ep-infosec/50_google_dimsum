@@ -1,0 +1,61 @@
+package(default_visibility = ["//visibility:public"])
+
+licenses(["notice"])  # Apache 2.0
+
+exports_files(["LICENSE"])
+
+cc_library(
+    name = "dimsum",
+    hdrs = [
+        "dimsum.h",
+        "index_sequence.h",
+        "types.h",
+        "operations.h",
+        "simd",
+        "simd_avx.h",
+        "simd_neon.h",
+        "simd_sse.h",
+        "simd_vsx.h",
+        "simulated.h",
+        "port.h",
+    ],
+)
+
+cc_library(
+    name = "x86",
+    hdrs = [
+        "dimsum_x86.h",
+    ],
+    deps = [
+        "dimsum",
+    ],
+)
+
+cc_test(
+    name = "dimsum_test",
+    srcs = ["dimsum_test.cc"],
+    deps = [
+        ":dimsum",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "dimsum_x86_test",
+    srcs = ["dimsum_x86_test.cc"],
+    deps = [
+        ":dimsum",
+        ":x86",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "dimsum_fuzz",
+    srcs = ["dimsum_fuzz.cc"],
+    deps = [
+        ":dimsum",
+        ":x86",
+    ],
+    alwayslink = 1,
+)
